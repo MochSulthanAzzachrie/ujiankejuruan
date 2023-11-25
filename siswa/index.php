@@ -20,7 +20,7 @@ include "../koneksi.php";
 
         <div class="mt-3">
             <h3 class="text-center">CRUD - PHP MySQL + Boostrap 5</h3>
-            <h3 class="text-center">Mocha</h3>
+            <h3 class="text-center">Moch. Sulthan Az-Zachrie</h3>
         </div>
 
         <div class="card">
