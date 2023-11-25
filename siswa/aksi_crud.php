@@ -22,9 +22,10 @@ if (isset($_POST['bsimpan'])) {
 
 // Uji jika tombol Ubah di klik
 if (isset($_POST['bubah'])) {
-
+    // var_dump($_POST['twali']);
+    // die;
     // Persiapan ubah data
-    $ubah = mysqli_query($koneksi, "UPDATE tsiswa SET nisn = '$_POST[tnisn]', nama = '$_POST[tnama]', jenis_kelamin = '$_POST[tkelamin]', alamat = '$_POST[talamat]', kelas = '$_POST[tkelas]', jurusan = '$_POST[tjurusan]' WHERE id_siswa = '$_POST[id_siswa]'");
+    $ubah = mysqli_query($koneksi, "UPDATE tsiswa SET nisn = '$_POST[tnisn]', nama = '$_POST[tnama]', jenis_kelamin = '$_POST[tkelamin]', alamat = '$_POST[talamat]', kelas = '$_POST[tkelas]', jurusan = '$_POST[tjurusan]', id_guru = '$_POST[twali]' WHERE id_siswa = '$_POST[id_siswa]'");
     // Jika simpan sukses
     if ($ubah) {
         echo "<script>alert('Ubah data Sukses!');

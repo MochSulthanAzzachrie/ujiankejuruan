@@ -55,7 +55,7 @@ include "../koneksi.php";
 
                     // Persiapan Menampilkan Data
                     $no = 1;
-                    $tampil = mysqli_query($koneksi, "SELECT * FROM tsiswa ORDER BY id_siswa DESC");
+                    $tampil = mysqli_query($koneksi, "SELECT tsiswa.*, tguru.nama as nama_guru FROM tsiswa INNER JOIN tguru ON tsiswa.id_guru = tguru.id_guru ORDER BY id_siswa DESC");
                     while ($data = mysqli_fetch_array($tampil)) :
 
                     ?>
@@ -68,7 +68,7 @@ include "../koneksi.php";
                             <td><?= $data['alamat']; ?></td>
                             <td><?= $data['kelas']; ?></td>
                             <td><?= $data['jurusan']; ?></td>
-                            <td><?= $data['id_guru']; ?></td>
+                            <td><?= $data['nama_guru']; ?></td>
                             <td>
                                 <a href="#" class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#modalUbah<?= $no; ?>">Ubah</a>
                                 <a href="#" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modalHapus<?= $no; ?>">Hapus</a>
@@ -137,15 +137,16 @@ include "../koneksi.php";
                                             </div>
 
                                             <div class="mb-3">
-                                                <label class="form-label">Kelas</label>
+                                                <label class="form-label">Wali Kelas</label>
                                                 <select class="form-select" name="twali">
 
+                                                    <option value="<?= $data['id_siswa']; ?>"><?= $data['nama_guru']; ?></option>
                                                     <?php
                                                     //menyeleksi data user
-                                                    $tampil = mysqli_query($koneksi, "SELECT * FROM tguru");
-                                                    while ($data = mysqli_fetch_array($tampil)) {
+                                                    $wali = mysqli_query($koneksi, "SELECT * FROM tguru");
+                                                    while ($guru = mysqli_fetch_array($wali)) {
                                                     ?>
-                                                        <option value="<?= $data['id_guru']; ?>"><?= $data['id_guru']; ?><?= $data['nama']; ?></option>
+                                                        <option value="<?= $guru['id_guru']; ?>"><?= $guru['nama']; ?></option>
                                                     <?php
                                                     }
                                                     ?>
@@ -172,7 +173,7 @@ include "../koneksi.php";
                                         <h1 class="modal-title fs-5" id="modalHapusLabel">Konfirmasi Hapus Data</h1>
                                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                     </div>
-                                    <form method="POST" action="aksi_crud.php">
+                                    <form method="POST" action="aksi_crud.php" enctype="multipart/form-data">
                                         <input type="hidden" name="id_siswa" value="<?= $data['id_siswa'] ?>">
 
                                         <div class="modal-body">
@@ -205,90 +206,92 @@ include "../koneksi.php";
 
                 <!-- Awal Modal Tambah -->
                 <div class="modal fade modal-lg" id="modalTambah" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="modalTambahLabel">Form Data Siswa SMK</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="modalTambahLabel">Form Data Siswa SMK</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <form method="POST" action="aksi_crud.php">
+
+                                        <div class="modal-body">
+
+                                            <div class="mb-3">
+                                                <label class="form-label">NISN</label>
+                                                <input type="text" class="form-control" name="tnisn" placeholder="Masukkan NISN Anda!">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Nama Lengkap</label>
+                                                <input type="text" class="form-control" name="tnama" placeholder="Masukkan Nama Lengkap Anda!">
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Jenis Kelamin</label>
+                                                <select class="form-select" name="tkelamin">
+                                                    <option value=""></option>
+                                                    <option value="Laki-laki">Laki-laki</option>
+                                                    <option value="Perempuan">Perempuan</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Alamat</label>
+                                                <textarea class="form-control" name="talamat" rows="3"></textarea>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Kelas</label>
+                                                <select class="form-select" name="tkelas">
+                                                    <option value=""></option>
+                                                    <option value="X(10)">X(10)</option>
+                                                    <option value="XI(11)">XI(11)</option>
+                                                    <option value="XII(12)">XII(12)</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Jurusan</label>
+                                                <select class="form-select" name="tjurusan">
+                                                    <option value=""></option>
+                                                    <option value="TKJ - Teknik Komputer & jaringan">TKJ - Teknik Komputer & jaringan</option>
+                                                    <option value="RPL - Rekayasa Perangkat Lunak">RPL - Rekayasa Perangkat Lunak</option>
+                                                    <option value="DKV - Desain Komunikasi Visual">DKV - Desain Komunikasi Visual</option>
+                                                    <option value="TKR - Teknik Kendaraan Ringan">TKR - Teknik Kendaraan Ringan</option>
+                                                    <option value="TBSM - Teknik & Bisnis Sepeda Motor">TBSM - Teknik & Bisnis Sepeda Motor</option>
+                                                    <option value="ATP - Agribisnis Tanaman Perkebunan">ATP - Agribisnis Tanaman Perkebunan</option>
+                                                    <option value="ATPH - Agribisnis Tanaman Pangan & Hortikultura">ATPH - Agribisnis Tanaman Pangan & Hortikultura</option>
+                                                </select>
+                                            </div>
+
+                                            <div class="mb-3">
+                                                <label class="form-label">Wali Kelas</label>
+                                                <select class="form-select" name="twali">
+
+                                                    <option value=""></option>
+                                                    <?php
+                                                    //menyeleksi data user
+                                                    $tampil = mysqli_query($koneksi, "SELECT * FROM tguru");
+                                                    while ($guru = mysqli_fetch_array($tampil)) {
+                                                    ?>
+                                                        <option value="<?= $guru['id_guru']; ?>"><?= $guru['nama']; ?></option>
+                                                    <?php
+                                                    }
+                                                    ?>
+                                                </select>
+                                            </div>
+
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn btn-primary" name="bsimpan">Simpan</button>
+                                            <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Keluar</button>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <form method="POST" action="aksi_crud.php">
-                                <div class="modal-body">
-
-                                    <div class="mb-3">
-                                        <label class="form-label">NISN</label>
-                                        <input type="text" class="form-control" name="tnisn" placeholder="Masukkan NISN Anda!">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Nama Lengkap</label>
-                                        <input type="text" class="form-control" name="tnama" placeholder="Masukkan Nama Lengkap Anda!">
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Jenis Kelamin</label>
-                                        <select class="form-select" name="tkelamin">
-                                            <option value=""></option>
-                                            <option value="Laki-laki">Laki-laki</option>
-                                            <option value="Perempuan">Perempuan</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Alamat</label>
-                                        <textarea class="form-control" name="talamat" rows="3"></textarea>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Kelas</label>
-                                        <select class="form-select" name="tkelas">
-                                            <option value=""></option>
-                                            <option value="X(10)">X(10)</option>
-                                            <option value="XI(11)">XI(11)</option>
-                                            <option value="XII(12)">XII(12)</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Jurusan</label>
-                                        <select class="form-select" name="tjurusan">
-                                            <option value=""></option>
-                                            <option value="TKJ - Teknik Komputer & jaringan">TKJ - Teknik Komputer & jaringan</option>
-                                            <option value="RPL - Rekayasa Perangkat Lunak">RPL - Rekayasa Perangkat Lunak</option>
-                                            <option value="DKV - Desain Komunikasi Visual">DKV - Desain Komunikasi Visual</option>
-                                            <option value="TKR - Teknik Kendaraan Ringan">TKR - Teknik Kendaraan Ringan</option>
-                                            <option value="TBSM - Teknik & Bisnis Sepeda Motor">TBSM - Teknik & Bisnis Sepeda Motor</option>
-                                            <option value="ATP - Agribisnis Tanaman Perkebunan">ATP - Agribisnis Tanaman Perkebunan</option>
-                                            <option value="ATPH - Agribisnis Tanaman Pangan & Hortikultura">ATPH - Agribisnis Tanaman Pangan & Hortikultura</option>
-                                        </select>
-                                    </div>
-
-                                    <div class="mb-3">
-                                        <label class="form-label">Wali Kelas</label>
-                                        <select class="form-select" name="twali">
-                                            <?php
-                                            //menyeleksi data guru
-                                            $tampil = mysqli_query($koneksi, "SELECT * FROM tguru");
-                                            while ($data = mysqli_fetch_array($tampil)) {
-                                            ?>
-                                                <option value="<?= $data['id_guru']; ?>"><?= $data['id_guru']; ?><?= ['nama']; ?></option>
-                                        </select>
-                                    </div>
-                                <?php
-                                            }
-                                ?>
-
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary" name="bsimpan">Simpan</button>
-                                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Keluar</button>
-                                </div>
-                            </form>
                         </div>
-                    </div>
-                </div>
 
-                <!-- Akhir Modal Tambah -->
-
+                        <!-- Akhir Modal Ubah -->
             </div>
         </div>
 
