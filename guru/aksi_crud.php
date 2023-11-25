@@ -73,19 +73,32 @@ if (isset($_POST['bubah'])) {
     }
 }
 
-// Uji jika tombol Hapus di klik
 if (isset($_POST['bhapus'])) {
-
     // Persiapan hapus data
-    $hapus = mysqli_query($koneksi, "DELETE FROM tguru WHERE id_guru = '$_POST[id_guru]'");
-    // Jika Hapus sukses
-    if ($hapus) {
+    $id_guru = $_POST['id_guru'];
+
+    // Mulai transaksi
+    mysqli_begin_transaction($koneksi);
+
+    // Hapus data dari tabel siswa terlebih dahulu
+    $hapus_siswa = mysqli_query($koneksi, "DELETE FROM tsiswa WHERE id_guru = '$id_guru'");
+
+    // Hapus data dari tabel guru
+    $hapus_guru = mysqli_query($koneksi, "DELETE FROM tguru WHERE id_guru = '$id_guru'");
+
+    // Check apakah kedua DELETE berhasil
+    if ($hapus_siswa && $hapus_guru) {
+        // Commit transaksi jika sukses
+        mysqli_commit($koneksi);
         echo "<script>alert('Hapus data Sukses!');
-        document.location='index.php'
-        </script>";
+            document.location='index.php';
+            </script>";
     } else {
+        // Rollback transaksi jika ada kegagalan
+        mysqli_rollback($koneksi);
         echo "<script>alert('Hapus data Gagal!');
-        document.location='index.php'
-        </script>";
+            document.location='index.php';
+            </script>";
     }
 }
+
